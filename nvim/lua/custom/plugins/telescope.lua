@@ -30,7 +30,8 @@ return {
     opts = {
       defaults = {
         layout_strategy = "vertical",
-        initial_mode = "normal",
+        -- initial_mode = "normal",
+        initial_mode = "insert",
         winblend = 0,
         mappings = {
           i = {
@@ -236,7 +237,10 @@ return {
       {
         "<leader>fc",
         function()
-          require('telescope.builtin').command_history()
+          local opts = {
+            initial_mode = "normal",
+          }
+          require('telescope.builtin').command_history(opts)
         end,
         desc = '[F]ind [C]ommand history',
       },
