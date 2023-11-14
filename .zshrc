@@ -134,3 +134,6 @@ function del()
 
 alias nvims="nvim -c LoadGitBranchSession"
 
+alias tmux="tmux -u attach-session -t gh-session || tmux -u new-session -s gh-session"
+alias git_clone_config='git clone git@github.com-config-files:uabgros/config-files.git'
+alias git_clone_pi_radio_Anna='git clone git@github.com-pi-radio-Anna:uabgros/pi-radio-Anna.git'
