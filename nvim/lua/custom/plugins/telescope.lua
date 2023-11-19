@@ -75,7 +75,21 @@ return {
             "legacy/llpp/",
             "meta-bbi",
           }
-          require("telescope.builtin").git_files(gopts)
+          local utils = require "telescope.utils"
+          local is_git = function()
+            local _, ret, stderr = utils.get_os_command_output {
+              "git",
+              "rev-parse",
+              "--is-inside-work-tree",
+            }
+            return ret
+          end
+
+          if is_git == 0 then
+            require("telescope.builtin").git_files(gopts)
+          else
+            require("telescope.builtin").find_files()
+          end
         end,
         desc = '[F]ind [F]ile',
       },
@@ -98,19 +112,6 @@ return {
           end)
         end,
         desc = '[F]ind [C]urrent file',
-      },
-      {
-        "<leader>ds",
-        function()
-          local opts = {
-            layout_config = { width = 0.9 },
-            show_line = true,
-            fname_width = 30,
-            symbol_width = 60,
-          }
-          require('telescope.builtin').lsp_document_symbols(opts)
-        end,
-        desc = '[D]ocument [S]ymbols',
       },
       {
         "<leader>fwe",
@@ -170,7 +171,7 @@ return {
         desc = '[Find] [W]ord by grep under [G]it-root',
       },
       {
-        "<leader>fww",
+        "<leader>fwd",
         function()
           vim.ui.input({ prompt = "Directory: ", default = vim.fn.getcwd(), completion = "dir" }, function(dir)
             dir = vim.trim(dir or "")
@@ -187,7 +188,7 @@ return {
             require("telescope.builtin").grep_string(opts)
           end)
         end,
-        desc = '[Find] [W]ord by grep [W]here?',
+        desc = '[Find] [W]ord by grep in [D]irectory?',
       },
       {
         "<leader>fgd",
@@ -218,7 +219,7 @@ return {
             end)
           end)
         end,
-        desc = '[F]ind by [G]rep in [D]iretory',
+        desc = '[F]ind by [G]rep in [D]irectory',
       },
       {
         "<leader>fo",
@@ -275,13 +276,6 @@ return {
           require('telescope.builtin').help_tags()
         end,
         desc = '[F]ind [H]elp-tags',
-      },
-      {
-        'gr',
-        function()
-          require('telescope.builtin').lsp_references { fname_width = 60, }
-        end,
-        desc = '[G]oto [R]eferences',
       },
     },
   },

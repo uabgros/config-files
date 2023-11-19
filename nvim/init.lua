@@ -110,6 +110,7 @@ require('lazy').setup({
   --       Uncomment any of the lines below to enable them.
   -- require 'kickstart.plugins.autoformat',
   -- require 'kickstart.plugins.debug',
+  -- {import 'goran.plugins'},
 
   -- NOTE: The import below can automatically add your own plugins, configuration, etc from `lua/goran/plugins/*.lua`
   --    You can use this folder to prevent any conflicts with this init.lua if you're interested in keeping
@@ -253,12 +254,6 @@ vim.cmd('autocmd BufReadPost gitsigns://* set bufhidden=delete') -- don't show g
 -- vim.keymap.set('n', '<leader>e', vim.diagnostic.open_float, { desc = 'Open floating diagnostic message' })
 vim.keymap.set('n', '<leader>qd', vim.diagnostic.setloclist, { desc = 'Open diagnostics list' })
 
--- Move around windows
-vim.keymap.set('n', "<C-h>", "<C-w>h", { desc = '' })
-vim.keymap.set('n', "<C-j>", "<C-w>j", { desc = '' })
-vim.keymap.set('n', "<C-k>", "<C-w>k", { desc = '' })
-vim.keymap.set('n', "<C-l>", "<C-w>l", { desc = '' })
-
 -- quit all windows
 vim.keymap.set('n', '<leader>qq', ":wa|qa<CR>", { desc = '[Q]uit all windows' })
 -- save all buffers
@@ -268,23 +263,17 @@ vim.keymap.set({ 'n', 'v' }, "<leader>l", ":nohlsearch<CR>", { desc = 'Redraw sc
 vim.keymap.set('n', "<C-n>", "lnext<CR>", { desc = '' });
 vim.keymap.set('n', "<C-p>", "lprev<CR>", { desc = '' });
 
-vim.keymap.set('n', '<leader>k', ':Man<CR><C-w>L', { desc = 'Unix manual page' })
+-- vim.keymap.set('n', '<leader>k', ':Man<CR><C-w>L', { desc = 'Unix manual page' })
 
 -- Quickfix list
 vim.keymap.set('n', "<leader>co", ":copen<CR>", { desc = 'copen' })
 vim.keymap.set('n', "<leader>cc", ":cclose<CR>", { desc = 'cclose' })
-vim.keymap.set('n', "<leader>cp", ":cprevious<CR>", { desc = 'cprevious' })
-vim.keymap.set('n', "<leader>cn", ":cnext<CR>", { desc = 'cnext' })
-vim.keymap.set('n', "<leader>cm", ":Copen<CR>", { desc = 'Copen' })
-vim.keymap.set('n', "<leader>ct", ":cclose<CR>:tab Copen<CR>", { desc = 'cclose : tab Copen' })
 vim.keymap.set('n', "<C-N>", ":cnext<CR>", { desc = '' })
 vim.keymap.set('n', "<C-P>", ":cprev<CR>", { desc = '' })
 
 -- Center after half page up/down
 vim.keymap.set('n', "<C-U>", "<C-U>zz", { desc = '' })
 vim.keymap.set('n', "<C-D>", "<C-D>zz", { desc = '' })
-
--- vim.keymap.set('t', "<leader><tab>", "<Cmd>FloatermToggle<CR>", { desc = 'Toggle terminal' })
 
 vim.keymap.set('n', "<leader>*", ":vimgrep //g % | copen<CR>", { desc = 'vimgrep current search pattern' })
 vim.keymap.set('n', "<leader>fpg", ":vimgrep //g `git ls-files` | copen<CR>",
@@ -306,7 +295,9 @@ vim.api.nvim_create_autocmd(
   { "BufWritePre", "FileWritePre" },
   {
     pattern = { "*.bzl", "BUILD" },
-    callback = require('goran.plugins/telescope-config').bzl_format
+    callback = function()
+      return require('goran.plugins/telescope-config').bzl_format
+    end,
   }
 -- command = "%!buildifier" }
 )
@@ -324,28 +315,9 @@ vim.api.nvim_create_user_command(
 vim.keymap.set("v", "<leader>rv", "\"hy:%s/<C-r>h//g<left><left>",
   { desc = "[R]eplace all instances of [V]isually highlighted words" }) --
 
--- reload config
-vim.keymap.set("n", "<leader>R", ":source ~/.config/nvim/init.lua<CR>", { desc = "[R]eload init.lua" }) -- reload neovim config
-
--- adjust split sizes easier
-vim.keymap.set("n", "<A-Left>", ":vertical resize +3<CR>")   -- Control+Left resizes vertical split +
-vim.keymap.set("n", "<A-Right>", ":vertical resize -3<CR>")  -- Control+Right resizes vertical split -
-vim.keymap.set("n", "<A-Up>", ":horizontal resize +3<CR>")   -- Control+Left resizes vertical split +
-vim.keymap.set("n", "<A-Down>", ":horizontal resize -3<CR>") -- Control+Right resizes vertical split -
 
 vim.keymap.set('n', '<leader>j', '<cmd>tabprevious<cr>', { silent = true })
 vim.keymap.set('n', '<leader>k', '<cmd>tabnext<cr>', { silent = true })
-
--- vim.api.nvim_create_user_command(
---   'FormatLine',
---   function()
---     -- code
---     vim.cmd('LspStop')
---     vim.cmd('gqq')
---     vim.cmd('LspStart')
---   end,
---   {}
--- )
 
 local function get_session_name()
   local name = vim.fn.getcwd()
@@ -370,6 +342,21 @@ vim.api.nvim_create_user_command(
   {}
 )
 
+local lspLoaded = 0
+vim.api.nvim_create_user_command(
+  'LoadLspSetup',
+  function()
+    -- code
+    if lspLoaded == 0 then
+      require('lspsetup')
+      lspLoaded = 1
+    end
+  end,
+  {}
+)
+
+vim.keymap.set("n", "<leader>R", "<cmd>LoadLspSetup<cr>", { desc = "Start lsp" }) -- reload neovim config
+
 vim.api.nvim_create_autocmd("VimLeavePre", {
   callback = function()
     if gitBranchSessionLoaded == 1 then
@@ -379,3 +366,12 @@ vim.api.nvim_create_autocmd("VimLeavePre", {
 })
 
 -- vim.keymap.set('n', "<leader>tw", "<Cmd>lua require('goran.plugins.telescope-config').window()<CR>")
+
+vim.api.nvim_create_user_command(
+  'ReloadTest',
+  function()
+    package.loaded.lspsetup = nil
+    require("lspsetup").todo()
+  end,
+  {}
+)

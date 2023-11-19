@@ -2,15 +2,6 @@
 local M = {}
 -- local utils = require "telescope.utils"
 
--- local function is_git()
---   local _, ret, stderr = utils.get_os_command_output {
---     "git",
---     "rev-parse",
---     "--is-inside-work-tree",
---   }
---   return ret
--- end
-
 local function path_remainder(fname_width, path)
   local str_len = string.len(path);
   if str_len > fname_width then
@@ -49,8 +40,8 @@ end
 
 function M.dyn_ws_symbols()
   local opts = {
-    fname_width = 80,
-    path_display = function(opts, path)
+    path_display = function(path)
+      local fname_width = 80
       return path_remainder(fname_width, path)
     end,
     layout_config = { width = 0.9 },
@@ -62,10 +53,10 @@ function M.query_symbol()
   local opts = {
     layout_config = { width = 0.9 },
     show_line = true,
-    fname_width = 80,
     query = vim.fn.expand("<cword>"),
     prompt_title = 'Find symbol \'' .. vim.fn.expand("<cword>") .. '\'',
     path_display = function()
+      local fname_width = 80
       return path_remainder(fname_width, path)
     end,
   }
