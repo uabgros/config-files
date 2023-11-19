@@ -1,7 +1,7 @@
 return
 {
   'uabgros/lspsetup.nvim',
-  -- event = { "CursorMoved" },
+  event = { "CursorMoved" },
   cmd = {
     'LoadLspSetup',
   },
