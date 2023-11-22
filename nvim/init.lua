@@ -258,7 +258,7 @@ vim.keymap.set('n', '<leader>qd', vim.diagnostic.setloclist, { desc = 'Open diag
 vim.keymap.set('n', '<leader>qq', ":wa|qa<CR>", { desc = '[Q]uit all windows' })
 -- save all buffers
 vim.keymap.set('n', "<leader>ww", ":wa<CR>", { desc = '[W]rite all buffers' })
-vim.keymap.set({ 'n', 'v' }, "<leader>l", ":nohlsearch<CR>", { desc = 'Redraw screen' })
+vim.keymap.set({ 'n', 'v' }, "<leader>L", ":nohlsearch<CR>", { desc = 'Redraw screen' })
 
 vim.keymap.set('n', "<C-n>", "lnext<CR>", { desc = '' });
 vim.keymap.set('n', "<C-p>", "lprev<CR>", { desc = '' });
@@ -290,18 +290,6 @@ function Highlight(args)
   vim.cmd('highlight ' .. args)
 end
 
--- Format bazel-files
-vim.api.nvim_create_autocmd(
-  { "BufWritePre", "FileWritePre" },
-  {
-    pattern = { "*.bzl", "BUILD" },
-    callback = function()
-      return require('goran.plugins/telescope-config').bzl_format
-    end,
-  }
--- command = "%!buildifier" }
-)
-
 vim.cmd("hi Visual term=reverse cterm=reverse guibg=Grey")
 
 vim.api.nvim_create_user_command(
@@ -311,13 +299,26 @@ vim.api.nvim_create_user_command(
   end,
   {}
 )
+-- Format bazel-files
+vim.api.nvim_create_autocmd(
+  { "BufWritePre", "FileWritePre" },
+  {
+    pattern = { "*.bzl", "BUILD" },
+    -- callback = function()
+    --   return require('goran.plugins/telescope-config').bzl_format
+    -- end,
+    --}
+    command = "%!buildifier"
+  }
+)
+
 -- Visual Maps
 vim.keymap.set("v", "<leader>rv", "\"hy:%s/<C-r>h//g<left><left>",
   { desc = "[R]eplace all instances of [V]isually highlighted words" }) --
 
 
-vim.keymap.set('n', '<leader>j', '<cmd>tabprevious<cr>', { silent = true })
-vim.keymap.set('n', '<leader>k', '<cmd>tabnext<cr>', { silent = true })
+vim.keymap.set('n', '<leader>h', '<cmd>tabprevious<cr>', { silent = true })
+vim.keymap.set('n', '<leader>l', '<cmd>tabnext<cr>', { silent = true })
 
 local function get_session_name()
   local name = vim.fn.getcwd()

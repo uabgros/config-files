@@ -286,7 +286,6 @@ return
           pyright = {},
           marksman = {},
           yamlls = {},
-          vimls = {},
 
           lua_ls = {
             Lua = {
@@ -294,6 +293,7 @@ return
               telemetry = { enable = false },
             },
           },
+          vimls = {},
         }
 
         -- nvim-cmp supports additional completion capabilities, so broadcast that to servers

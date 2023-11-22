@@ -4,6 +4,7 @@ return
 
   cmd = {
     "G",
+    "Gread",
   },
   keys = {
     {
