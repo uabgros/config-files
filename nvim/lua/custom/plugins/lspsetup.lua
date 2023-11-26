@@ -64,7 +64,7 @@ return
               init_selection = '<c-space>',
               node_incremental = '<c-space>',
               scope_incremental = '<c-s>',
-              node_decremental = '<M-space>',
+              node_decremental = '<BS>',
             },
           },
           textobjects = {
@@ -85,7 +85,8 @@ return
               enable = true,
               set_jumps = true, -- whether to set jumps in the jumplist
               goto_next_start = {
-                [']m'] = '@function.outer',
+                ['<leader>j'] = '@function.outer',
+                -- [']m'] = '@function.outer',
                 [']]'] = '@class.outer',
               },
               goto_next_end = {
@@ -93,7 +94,8 @@ return
                 [']['] = '@class.outer',
               },
               goto_previous_start = {
-                ['[m'] = '@function.outer',
+                ['<leader>k'] = '@function.outer',
+                -- ['[m'] = '@function.outer',
                 ['[['] = '@class.outer',
               },
               goto_previous_end = {
@@ -145,14 +147,14 @@ return
         'hrsh7th/cmp-nvim-lsp',
 
         -- Adds a number of user-friendly snippets
-        'rafamadriz/friendly-snippets',
+        -- 'rafamadriz/friendly-snippets',
 
         "hrsh7th/cmp-buffer",
         "hrsh7th/cmp-path",
         "hrsh7th/cmp-cmdline",
         "hrsh7th/cmp-nvim-lua",
         "hrsh7th/cmp-nvim-lsp-document-symbol",
-        "zbirenbaum/copilot-cmp",
+        -- "zbirenbaum/copilot-cmp",
       },
       config = function()
         local cmp = require('cmp')
